@@ -1,0 +1,52 @@
+/* Reset styles */
+body {
+    font-family: Arial, sans-serif;
+    background: #15202b;
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+/* Header */
+.twitter-header {
+    background: #1da1f2;
+    padding: 15px;
+    text-align: center;
+    font-size: 24px;
+}
+
+/* Main Feed */
+.twitter-feed {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 10px;
+}
+
+/* Tweet Box */
+.tweet {
+    background: #192734;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: 1px solid #38444d;
+}
+
+/* Tweet User */
+.tweet-user {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* Tweet Actions */
+.tweet-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.tweet-actions i {
+    color: #1da1f2;
+    margin-right: 10px;
+    cursor: pointer;
+    font-size: 18px;
+}

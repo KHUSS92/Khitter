@@ -1,0 +1,50 @@
+# WordPress Core Files (You should not version control these)
+wordpress/*
+!wordpress/wp-content/
+!wordpress/wp-config.php
+
+# Ignore common system files
+.DS_Store
+Thumbs.db
+*.bak
+*.swp
+*.swo
+*.swn
+
+# Ignore WordPress Uploads (Media files should not be in Git)
+wordpress/wp-content/uploads/
+
+# Ignore Plugins & Cache
+wordpress/wp-content/plugins/
+wordpress/wp-content/cache/
+wordpress/wp-content/upgrade/
+
+# Ignore SCSS Compiled CSS Files (If using SCSS)
+wordpress/wp-content/themes/twitter-clone/style.css
+wordpress/wp-content/themes/twitter-clone/style.css.map
+
+# Ignore Node Modules (if using NPM for SCSS)
+node_modules/
+npm-debug.log
+package-lock.json
+
+# Ignore Composer Vendor Directory (if using Composer)
+vendor/
+composer.lock
+
+# Ignore JetBrains IDE files
+.idea/
+
+# Ignore Logs & Debug Files
+debug.log
+error_log
+wordpress/wp-content/debug.log
+
+# Ignore WordPress Backup Files
+*.sql
+*.sql.gz
+*.zip
+wordpress/wp-content/backups/
+
+# Ignore Environment Variables
+.env
