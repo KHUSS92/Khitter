@@ -29,7 +29,15 @@
 
     <!-- Twitter Header -->
     <header class="twitter-header">
-        <h1><a href="<?php echo home_url(); ?>">Khitter</a></h1>
-    </header>
+    <a href="<?php echo home_url(); ?>">
+        <?php if (has_custom_logo()) {
+            the_custom_logo();
+        } else { ?>
+            <img src="<?php echo get_template_directory_uri(); ?>/assets/logo.svg" alt="Logo" class="logo">
+        <?php } ?>
+    </a>
+</header>
+
+
 
     <main class="twitter-feed">

@@ -1,249 +1,239 @@
-/* General Reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+@use "sass:color";
 
-/* Twitter Color Theme */
+// 🎨 Color Variables
 $twitter-blue: #1da1f2;
 $twitter-dark: #15202b;
 $twitter-light: #192734;
 $twitter-border: #38444d;
-$twitter-text: #e1e8ed;
 $twitter-hover: #22303c;
+$twitter-text: #e1e8ed;
+$twitter-like: #e0245e;
+$twitter-retweet: #17bf63;
 
-/* Body */
+// 🔄 Global Reset & Base Styles
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background: $twitter-dark;
-    color: white;
-    display: flex;
-    justify-content: center;
+  font-family: Arial, sans-serif;
+  background: $twitter-dark;
+  color: $twitter-text;
 }
 
-/* Page Wrapper */
-.page-wrapper {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    max-width: 1100px;
-    margin: 0 auto;
+a {
+  text-decoration: none;
+  color: $twitter-blue;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
-/* Twitter Header */
+// 🧭 Header
 .twitter-header {
-    background: $twitter-blue;
-    padding: 15px 0;
-    font-size: 22px;
-    font-weight: bold;
-    width: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 101;
-    text-align: left;
-    padding-left: 30px;
-    display: flex;
-    align-items: center;
-    height: 60px;
+  background: $twitter-blue;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+
+  .logo {
+    height: 36px;
+    width: auto;
+  }
 }
 
-.twitter-header a {
-    color: white;
-    text-decoration: none;
-}
-
-/* Sidebar Navigation (Left) */
+// 📑 Sidebar Left
 .sidebar-left {
-    width: 220px; 
-    padding: 20px;
-    padding-top: 60px;
-    position: fixed;
-    left: 0;
-    top: 0;
-    height: 100%;
-    background: $twitter-dark;
-    border-right: 1px solid $twitter-border;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+  width: 220px;
+  position: fixed;
+  left: 0;
+  top: 60px;
+  height: calc(100% - 60px);
+  background: $twitter-dark;
+  border-right: 1px solid $twitter-border;
+  padding: 20px;
+
+  nav ul {
+    li {
+      margin: 15px 0;
+
+      a {
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;
+        font-size: 18px;
+        font-weight: bold;
+        border-radius: 30px;
+        color: white;
+        transition: background 0.2s ease;
+
+        i {
+          margin-right: 10px;
+          font-size: 20px;
+        }
+
+        &:hover {
+          background: $twitter-hover;
+        }
+      }
+    }
+  }
 }
 
-.sidebar-left nav ul {
-    list-style: none;
-    padding: 0;
-    margin-top: 20px;
-}
+// 🧑‍💼 User Profile
+.user-profile {
+  display: flex;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid $twitter-border;
 
-.sidebar-left nav ul li {
-    margin: 20px 0;
-}
-
-.sidebar-left nav ul li a {
-    text-decoration: none;
-    color: white;
-    font-weight: bold;
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    border-radius: 30px;
-    transition: background 0.2s;
-}
-
-.sidebar-left nav ul li a i {
-    margin-right: 10px;
-    font-size: 20px;
-}
-
-.sidebar-left nav ul li a:hover {
-    background: $twitter-hover;
-    color: $twitter-blue;
-}
-
-/* Twitter Feed */
-.twitter-feed {
-    width: 700px;
-    margin-left: -20px;
-    margin-right: auto;
-    padding: 20px;
-    padding-top: 60px;
-    border: none;
-}
-
-/* Right Sidebar */
-.sidebar-right {
-    width: 280px;
-    position: fixed;
-    right: 0;
-    top: 60px;
-    height: 100%;
-    background: $twitter-dark;
-    border-left: 1px solid $twitter-border;
-    padding: 20px;
-}
-
-/* New Tweet Form */
-#new-tweet-form {
-    background: $twitter-light;
-    padding: 15px;
-    border-radius: 12px;
-    border: 1px solid $twitter-border;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-}
-
-#new-tweet-form textarea {
-    width: 100%;
-    height: 80px;
-    background: $twitter-dark;
-    border: 1px solid $twitter-border;
-    color: white;
-    padding: 10px;
-    border-radius: 8px;
-    resize: none;
-    font-size: 14px;
-}
-
-#new-tweet-form button {
-    background: $twitter-blue;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    font-weight: bold;
-    margin-top: 10px;
-    transition: background 0.2s;
-    width: 120px;
-}
-
-#new-tweet-form button:hover {
-    background: #1991da;
-}
-
-/* Tweet Box */
-.tweet {
-    background: $twitter-light;
-    padding: 20px;
-    margin-bottom: 15px;
-    border-bottom: 1px solid $twitter-border;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    border-radius: 12px;
-}
-
-/* Tweet Header */
-.tweet-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 5px;
-}
-
-.tweet-avatar {
+  .profile-avatar {
     width: 48px;
     height: 48px;
     border-radius: 50%;
     margin-right: 10px;
+  }
+
+  .user-info {
+    .username {
+      font-weight: bold;
+      font-size: 16px;
+      color: white;
+    }
+
+    .handle {
+      font-size: 14px;
+      color: $twitter-text;
+    }
+  }
 }
 
-.tweet-user a {
+// 📰 Main Twitter Feed
+.twitter-feed {
+  width: 600px;
+  margin: 80px auto 0 auto;
+  padding: 20px;
+}
+
+// 📈 Right Sidebar (Trending Topics)
+.sidebar-right {
+  width: 280px;
+  position: fixed;
+  right: 0;
+  top: 60px;
+  height: calc(100% - 60px);
+  background: $twitter-dark;
+  border-left: 1px solid $twitter-border;
+  padding: 20px;
+  overflow-y: auto;
+  z-index: 50;
+
+  h3 {
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+
+  ul li {
     font-size: 16px;
-    font-weight: bold;
-    color: white;
-    text-decoration: none;
-}
-
-.tweet-user a:hover {
     color: $twitter-blue;
-}
-
-/* Tweet Content */
-.tweet-content {
-    font-size: 15px;
-    line-height: 1.6;
-    margin-bottom: 10px;
-}
-
-/* Like & Retweet Buttons */
-.tweet-actions {
-    display: flex;
-    justify-content: space-between;
-    padding-top: 8px;
-}
-
-.tweet-actions button {
-    background: none;
-    border: none;
-    color: #8899a6;
-    font-size: 16px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 
-.tweet-actions button i {
-    margin-right: 5px;
-    font-size: 16px;
-}
-
-.tweet-actions button:hover {
-    color: $twitter-blue;
-}
-
-/* Footer */
+// 📄 Footer
 .twitter-footer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    text-align: center;
-    background: $twitter-dark;
-    padding: 15px;
-    font-size: 12px;
-    color: #8899a6;
-    border-top: 1px solid $twitter-border;
+  width: 100%;
+  text-align: center;
+  padding: 15px;
+  font-size: 12px;
+  color: color.adjust($twitter-text, $lightness: 20%);
+  border-top: 1px solid $twitter-border;
+  margin-top: 20px;
 }
+
+.tweets {
+    background-color: #15202b;
+    border-radius: 16px;
+    padding: 20px;
+    max-width: 600px;
+    margin: 20px auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+    h3 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #e1e8ed;
+      margin-bottom: 16px;
+    }
+  
+    .tweet {
+      background-color: #192734;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      color: #e1e8ed;
+      display: flex;
+      align-items: flex-start;
+  
+      p {
+        margin: 0;
+        font-size: 15px;
+        line-height: 1.5;
+  
+        strong {
+          color: #1da1f2;
+          font-weight: 600;
+        }
+      }
+    }
+  
+    .tweet + .tweet {
+      border-top: 1px solid #22303c;
+    }
+  }
+  
+  // 📝 Tweet Form Styling
+  #new-tweet-form {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+  
+    textarea {
+      width: 100%;
+      border: 1px solid #38444d;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 14px;
+      background-color: #192734;
+      color: #e1e8ed;
+      resize: none;
+    }
+  
+    button {
+      align-self: flex-end;
+      margin-top: 10px;
+      padding: 8px 16px;
+      background-color: #1da1f2;
+      border: none;
+      border-radius: 20px;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+  
+      &:hover {
+        background-color: #1991da;
+      }
+    }
+  }
