@@ -1,5 +1,7 @@
+<!DOCTYPE html>
+<html>
 <?php get_header(); ?>
-
+<body>
 <div class="page-wrapper">
     <?php get_template_part('sidebar', 'left'); ?>
 
@@ -17,15 +19,16 @@
             if ($tweets):
                 foreach ($tweets as $tweet): ?>
                     <article class="tweet">
-                        <p><strong>@<?php echo get_the_author_meta('user_nicename', $tweet->post_author); ?>:</strong>
-                            <?php echo esc_html($tweet->post_content); ?></p>
+                        <p>
+                            <strong>@<?php echo get_the_author_meta('user_nicename', $tweet->post_author); ?>:</strong>
+                            <?php echo esc_html($tweet->post_content); ?>
+                        </p>
                     </article>
                 <?php endforeach;
             else: ?>
                 <p>No tweets found.</p>
             <?php endif; ?>
         </section>
-
     </main>
 
     <aside class="sidebar-right">
@@ -35,3 +38,7 @@
         </ul>
     </aside>
 </div>
+
+<?php wp_footer(); ?>
+</body>
+</html>
