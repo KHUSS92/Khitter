@@ -1,26 +1,23 @@
 jQuery(document).ready(function($) {
     $.ajax({
         url: MyTrends.ajax_url,
-        method: 'POST',
+        type: 'POST',
         dataType: 'json',
-        data: {
-            action: 'get_searchapiio_trends'
-        },
+        data: { action: 'get_trending_topics' },
         success: function(response) {
-            if (response.success) {
-                var topics = response.data; // The array of trends from PHP
-                var $list = $('#trending-topics');
-                $list.empty();
+            if (response.success && Array.isArray(response.data)) {
+                let topics = response.data; // now this is the array of topic strings
+                let html = '';
                 topics.forEach(function(topic) {
-                    $list.append('<li>' + topic + '</li>');
+                    html += '<li>' + topic + '</li>';
                 });
+                $('#trending-topics').html(html);
             } else {
-                // The server returned success=false
-                $('#trending-topics').html('<li>' + response.data.error + '</li>');
+                console.error("Error fetching trends:", response.data.error);
             }
         },
-        error: function() {
-            $('#trending-topics').html('<li>An error occurred while fetching trends.</li>');
+        error: function(xhr, status, error) {
+            console.error("Error fetching trends.", error);
         }
     });
 });

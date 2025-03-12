@@ -30,14 +30,12 @@ add_action('after_setup_theme', 'khitter_theme_setup');
 function khitter_enqueue_assets() {
     // Styles
     wp_enqueue_style('khitter-style', get_stylesheet_uri(), [], filemtime(get_template_directory() . '/style.css'));
-
-    // Font Awesome for icons
     wp_enqueue_style('font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
 
     // Scripts
     wp_enqueue_script('jquery');
 
-    // Main script for tweet submissions, etc.
+    // Main script for tweet submissions
     wp_enqueue_script(
         'khitter-main',
         get_template_directory_uri() . '/js/main.js',
@@ -55,7 +53,7 @@ function khitter_enqueue_assets() {
 add_action('wp_enqueue_scripts', 'khitter_enqueue_assets');
 
 /**
- * Enqueue the script that will handle fetching trending topics from searchapi.io
+ * Enqueue the script that handles fetching trending topics.
  */
 function khitter_enqueue_trends_script() {
     wp_enqueue_script(
@@ -66,8 +64,8 @@ function khitter_enqueue_trends_script() {
         true
     );
 
-    // Localize script for trending topics
-    wp_localize_script('khitter-trends', 'KhitterTrends', [
+    // Localize script for trending topics – variable name must match in JS.
+    wp_localize_script('khitter-trends', 'MyTrends', [
         'ajax_url' => admin_url('admin-ajax.php'),
     ]);
 }
@@ -114,41 +112,44 @@ add_action('widgets_init', 'khitter_remove_default_widgets', 11);
 // 📈 TRENDING TOPICS (USING searchapi.io)
 // ─────────────────────────────────────────────
 function khitter_fetch_trending_topics() {
-    // Replace with your actual searchapi.io endpoint & parameters
-    $api_url = 'https://api.searchapi.io/api/v1/google/trends/trendingNow?geo=US&hl=en';
-
-    // Your searchapi.io API key goes here
-    $api_key = 'YOUR_SEARCHAPIIO_API_KEY';
-
-    // Call the searchapi.io endpoint
+    // Updated API endpoint based on the documentation.
+    // Note: Replace the API key if necessary.
+    $api_url = '';
+    
+    // Set a User-Agent header to mimic a browser request.
     $response = wp_remote_get($api_url, [
         'headers' => [
-            'x-api-key' => $api_key,
+            'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
         ],
     ]);
-
-    // Check for request errors
+    
     if ( is_wp_error($response) ) {
+        error_log("Trend API error: " . $response->get_error_message());
         wp_send_json_error(['error' => 'Failed to fetch trends from searchapi.io']);
     }
-
+    
     $body = wp_remote_retrieve_body($response);
     $data = json_decode($body, true);
-
-    // Adjust this structure based on searchapi.io docs
-    // For example, if the data is in $data['trendingNow']
-    if ( empty($data) || empty($data['trendingNow']) ) {
+    
+    // Log the raw response for debugging.
+    error_log("Trend API raw response: " . substr($body, 0, 500));
+    
+    if ( empty($data) ) {
+        error_log("Trend API response empty or unexpected structure: " . print_r($data, true));
         wp_send_json_error(['error' => 'No trending topics found.']);
     }
-
-    // Extract the topic titles or queries
-    $trends = [];
-    foreach ($data['trendingNow'] as $trend_item) {
-        // Adjust this if the structure is different, e.g. $trend_item['title'] or $trend_item['query']
-        $trends[] = $trend_item['title'] ?? 'Untitled Topic';
+    
+    // Based on the documentation, trending topics are returned in the 'results' key.
+    if ( ! isset($data['trends']) || empty($data['trends']) ) {
+        wp_send_json_error(['error' => 'No trending topics found.']);
     }
-
-    // Return success with the array of topics
+    
+    $trends = [];
+    foreach ($data['trends'] as $trend_item) {
+        // The trending “title” is actually under `query`
+        $trends[] = $trend_item['query'] ?? 'Untitled Topic';
+    }
+    
     wp_send_json_success($trends);
 }
 add_action('wp_ajax_get_trending_topics', 'khitter_fetch_trending_topics');
@@ -167,7 +168,7 @@ function khitter_register_tweet_post_type() {
         'has_archive'  => true,
         'supports'     => ['title', 'editor', 'author'],
         'menu_icon'    => 'dashicons-twitter',
-        'show_in_rest' => true, // Enables Gutenberg and REST API
+        'show_in_rest' => true,
     ]);
 }
 add_action('init', 'khitter_register_tweet_post_type');
@@ -176,36 +177,31 @@ add_action('init', 'khitter_register_tweet_post_type');
 // ✏️ TWEET SUBMISSION AJAX
 // ─────────────────────────────────────────────
 function khitter_submit_tweet() {
-    // Check user login
-    if (!is_user_logged_in()) {
+    if ( !is_user_logged_in() ) {
         wp_send_json_error(['message' => 'You must be logged in to tweet.']);
     }
 
-    // Check nonce for security
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'submit_tweet_nonce')) {
+    if ( !isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'submit_tweet_nonce') ) {
         wp_send_json_error(['message' => 'Invalid request.']);
     }
 
     $content = sanitize_text_field($_POST['content']);
-
-    if (empty($content)) {
+    if ( empty($content) ) {
         wp_send_json_error(['message' => 'Tweet cannot be empty.']);
     }
 
-    // Create the tweet as a post
     $tweet_id = wp_insert_post([
-        'post_title'  => 'Tweet by ' . wp_get_current_user()->user_login,
-        'post_content'=> $content,
-        'post_type'   => 'tweet',
-        'post_status' => 'publish',
-        'post_author' => get_current_user_id(),
+        'post_title'   => 'Tweet by ' . wp_get_current_user()->user_login,
+        'post_content' => $content,
+        'post_type'    => 'tweet',
+        'post_status'  => 'publish',
+        'post_author'  => get_current_user_id(),
     ]);
 
-    if (is_wp_error($tweet_id)) {
+    if ( is_wp_error($tweet_id) ) {
         wp_send_json_error(['message' => 'Failed to submit tweet.']);
     }
 
-    // Return the newly created tweet data
     $tweet = get_post($tweet_id);
     wp_send_json_success([
         'author'  => get_the_author_meta('user_nicename', $tweet->post_author),
@@ -220,17 +216,24 @@ add_action('wp_ajax_nopriv_submit_tweet', 'khitter_submit_tweet');
 // ─────────────────────────────────────────────
 remove_action('wp_head', 'wp_generator');
 
+// ─────────────────────────────────────────────
 // 🧹 CLEAN UP WORDPRESS HEAD
+// ─────────────────────────────────────────────
 remove_action('wp_head', 'rsd_link');
 remove_action('wp_head', 'wlwmanifest_link');
 remove_action('wp_head', 'wp_shortlink_wp_head');
 
+// ─────────────────────────────────────────────
 // 🛡️ DISABLE EMOJI SCRIPTS
+// ─────────────────────────────────────────────
 remove_action('wp_head', 'print_emoji_detection_script', 7);
 remove_action('wp_print_styles', 'print_emoji_styles');
 
+// ─────────────────────────────────────────────
 // 🏠 REDIRECT DEFAULT LOGIN LOGO TO SITE
+// ─────────────────────────────────────────────
 function khitter_custom_login_logo_url() {
     return home_url();
 }
 add_filter('login_headerurl', 'khitter_custom_login_logo_url');
+?>
